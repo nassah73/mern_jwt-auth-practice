@@ -17,6 +17,20 @@ const register=async(req,res)=>{
     
     const accesToken =token.createAccessToken(UserSaved._id)
     const refreshtoken =token.createRefreshToken(UserSaved._id)
+    res.status(200).send({
+      accesToken,
+      email:req.body.email
+    })
+    res.cookie(
+      'refreshToken',
+      refreshtoken,
+      {
+        httpOnly:true,
+        path:'/',
+         secure: false,
+        sameSite: 'Strict'
+      }
+    )
     res.status(200).json({access_token:accesToken,refresh_token:refreshtoken})
     }
     catch(error){
