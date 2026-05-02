@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const {hash}=require('bcrypt')
+const token=require('../tokenLogic')
 const register=async(req,res)=>{
     try{
 
@@ -10,8 +11,13 @@ const register=async(req,res)=>{
         email,
         password:hashpassword
        })
-         await NewUser.save()
-      res.status(200).json(NewUser)   
+       const UserSaved= await NewUser.save()
+
+     // res.status(200).json(NewUser)   
+    
+    const accesToken =token.createAccessToken(UserSaved._id)
+    const refreshtoken =token.createRefreshToken(UserSaved._id)
+    res.status(200).json({access_token:accesToken,refresh_token:refreshtoken})
     }
     catch(error){
       res.status(503).json({message:error.message})
